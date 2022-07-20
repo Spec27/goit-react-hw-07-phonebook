@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contacts/contact-actions';
-import { getContacts } from '../../redux/contacts/contacts-selector';
+import {
+  useCreateContactsMutation,
+  useFetchContactsQuery,
+} from 'redux/contacts/contactsApi';
 import s from './Form.module.css';
 
 function Form() {
+  const [createContacts] = useCreateContactsMutation();
+  const { data: contacts } = useFetchContactsQuery();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
 
   const handleChange = event => {
     const { name, value } = event.currentTarget;
@@ -33,12 +34,13 @@ function Form() {
 
   const handleSubmit = event => {
     event.preventDefault();
+
     if (checkRepeatName(name)) {
-      alert(`${name} is already in contacts.`);
+      alert(`Sory Bro the name ( ${name} ) is already in contacts.`);
       return;
     }
 
-    dispatch(addContact({ name, number }));
+    createContacts({ name, phone: number });
     setName('');
     setNumber('');
   };
